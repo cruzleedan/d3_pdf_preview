@@ -225,8 +225,12 @@ class _D3PdfViewerState extends State<D3PdfViewer>
     if (_pageHeights.isEmpty) return;
     final m = _controller.value;
     final scale = m.getMaxScaleOnAxis();
-    final top = -m.getTranslation().y / scale - widget.padding.top;
-    _page.value = pageIndexAt(top, _pageHeights, _gap);
+    // The page in the middle of the view: with two pages half on screen the
+    // counter follows the one the eye is on, not whichever sliver is at the top.
+    final middle =
+        (-m.getTranslation().y + _viewport.height / 2) / scale -
+        widget.padding.top;
+    _page.value = pageIndexAt(middle, _pageHeights, _gap);
   }
 
   // Interpolated state of an in-flight double-tap zoom: (scale, tx, ty).

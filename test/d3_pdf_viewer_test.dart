@@ -70,6 +70,18 @@ void main() {
     expect(find.bySemanticsLabel('Page 2 of 3'), findsOneWidget);
   });
 
+  testWidgets('the page counter follows the page in the middle of the view', (
+    t,
+  ) async {
+    await pump(t);
+    expect(find.text('Page 1 of 3'), findsOneWidget);
+    // Scroll by about one and a bit pages: page 2 now fills the middle even
+    // though a sliver of page 1 is still at the top.
+    await t.drag(find.byType(InteractiveViewer), const Offset(0, -500));
+    await t.pumpAndSettle();
+    expect(find.text('Page 2 of 3'), findsOneWidget);
+  });
+
   testWidgets('a single page shows no page counter', (t) async {
     await pump(t, pages: 1);
     expect(find.textContaining('Page 1 of'), findsNothing);
