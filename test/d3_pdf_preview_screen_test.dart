@@ -77,6 +77,33 @@ void main() {
     expect(find.byType(D3InfoButton), findsNothing);
   });
 
+  testWidgets('a narrow screen at 2x text does not overflow', (t) async {
+    t.view.physicalSize = const Size(360, 720);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.reset);
+    await t.pumpWidget(
+      MaterialApp(
+        theme: D3AppTheme.light(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: D3PdfPreviewScreen(
+          title: 'Visit log',
+          summaryLines: const ['Nov 1 to Nov 30', '7 visits'],
+          bytes: Future.value(Uint8List(2048)),
+          infoMessage: 'x',
+          rasterizer: (bytes, {required dpi, pages}) => const Stream.empty(),
+          bottomBuilder: (context, pdf) =>
+              D3Button(label: 'Save', isFullWidth: true, onPressed: () {}),
+        ),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(t.takeException(), isNull);
+  });
+
   testWidgets('a PDF that fails to build shows the error, not the pages', (
     t,
   ) async {

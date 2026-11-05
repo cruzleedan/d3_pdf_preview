@@ -122,10 +122,14 @@ class D3PdfPreviewScreen extends StatelessWidget {
                               color: colors.onSurfaceVariant,
                             ),
                             const SizedBox(width: D3Spacing.s4),
-                            Text(
-                              'Pinch or double-tap to zoom',
-                              style: textTheme.bodySmall?.copyWith(
-                                color: colors.onSurfaceVariant,
+                            // Flexible so it wraps at a large text size instead of
+                            // overflowing a narrow screen.
+                            Flexible(
+                              child: Text(
+                                'Pinch or double-tap to zoom',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colors.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],
