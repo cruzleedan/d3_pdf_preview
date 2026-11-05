@@ -128,6 +128,47 @@ void main() {
     expect(_scale(t), greaterThan(1.2));
   });
 
+  // A real pinch is rarely tidy: the second finger lands a moment after the
+  // first, and one finger often moves much more than the other.
+  testWidgets('pinch still zooms when the first finger has already moved', (
+    t,
+  ) async {
+    await pump(t);
+    final c = t.getCenter(find.byType(InteractiveViewer));
+    final a = await t.startGesture(c - const Offset(30, 0), pointer: 1);
+    for (var i = 0; i < 4; i++) {
+      await a.moveBy(const Offset(0, -12));
+      await t.pump(const Duration(milliseconds: 16));
+    }
+    final b = await t.startGesture(c + const Offset(30, 0), pointer: 2);
+    for (var i = 0; i < 14; i++) {
+      await a.moveBy(const Offset(-3, 0));
+      await b.moveBy(const Offset(3, 0));
+      await t.pump(const Duration(milliseconds: 16));
+    }
+    await a.up();
+    await b.up();
+    await t.pumpAndSettle();
+    expect(_scale(t), greaterThan(1.2));
+  });
+
+  testWidgets('pinch zooms when one finger moves far more than the other', (
+    t,
+  ) async {
+    await pump(t);
+    final c = t.getCenter(find.byType(InteractiveViewer));
+    final a = await t.startGesture(c - const Offset(30, 0), pointer: 1);
+    final b = await t.startGesture(c + const Offset(30, 0), pointer: 2);
+    for (var i = 0; i < 14; i++) {
+      await b.moveBy(const Offset(8, 4));
+      await t.pump(const Duration(milliseconds: 16));
+    }
+    await a.up();
+    await b.up();
+    await t.pumpAndSettle();
+    expect(_scale(t), greaterThan(1.2));
+  });
+
   testWidgets('pinch stops at the zoom limit', (t) async {
     await pump(t);
     await pinchOut(t, 140);
