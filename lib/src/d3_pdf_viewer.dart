@@ -307,7 +307,23 @@ class _D3PdfViewerState extends State<D3PdfViewer>
     final background = widget.backgroundColor ?? colors.surfaceContainer;
 
     if (_failed) {
-      return ColoredBox(color: background, child: const SizedBox.expand());
+      // The PDF itself is fine; only drawing its pages failed. Say so, so the
+      // empty space is not a mystery, and the app's own actions (Print, Share)
+      // still work on the bytes.
+      return ColoredBox(
+        color: background,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(D3Spacing.s24),
+            child: Text(
+              'The pages could not be shown here. The report itself is fine.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ),
+        ),
+      );
     }
     if (_slots.isEmpty) {
       return ColoredBox(

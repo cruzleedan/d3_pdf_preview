@@ -179,6 +179,8 @@ void main() {
       await t.pumpAndSettle();
       expect(t.takeException(), isNull);
       expect(find.byType(InteractiveViewer), findsNothing);
+      // Not a mystery blank: it says the pages, not the report, failed.
+      expect(find.textContaining('could not be shown'), findsOneWidget);
     },
   );
 }
